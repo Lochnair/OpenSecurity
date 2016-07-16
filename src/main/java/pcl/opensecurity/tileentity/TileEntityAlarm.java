@@ -57,7 +57,7 @@ public class TileEntityAlarm extends TileEntityMachineBase implements SimpleComp
 	}
 
 	public void setShouldStart(boolean b) {
-		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		worldObj.markBlockForUpdate(pos);
 		getDescriptionPacket();
 		shouldPlay = true;
 
@@ -65,7 +65,7 @@ public class TileEntityAlarm extends TileEntityMachineBase implements SimpleComp
 
 	public void setShouldStop(boolean b) {
 		shouldPlay = false;
-		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		worldObj.markBlockForUpdate(pos);
 		getDescriptionPacket();
 	}
 
@@ -93,7 +93,7 @@ public class TileEntityAlarm extends TileEntityMachineBase implements SimpleComp
 		if (AlarmResource.sound_map.containsValue(alarm + ".ogg")) {
 			soundName = alarm;
 			setSound(alarm);
-			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+			worldObj.markBlockForUpdate(pos);
 			getDescriptionPacket();
 			return new Object[] { "Success" };
 		} else {
@@ -139,12 +139,12 @@ public class TileEntityAlarm extends TileEntityMachineBase implements SimpleComp
 	public Packet getDescriptionPacket() {
 		NBTTagCompound tagCom = new NBTTagCompound();
 		this.writeToNBT(tagCom);
-		return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, this.blockMetadata, tagCom);
+		return new S35PacketUpdateTileEntity(this.pos, 1, tagCom);
 	}
 
 	@Override
 	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
-		NBTTagCompound tagCom = packet.func_148857_g();
+		NBTTagCompound tagCom = packet.getNbtCompound();
 		this.readFromNBT(tagCom);
 	}
 

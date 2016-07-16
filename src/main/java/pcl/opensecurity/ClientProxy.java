@@ -10,6 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.MinecraftForgeClient;
 import pcl.opensecurity.CommonProxy;
@@ -31,9 +32,8 @@ import pcl.opensecurity.tileentity.TileEntityCardWriter;
 public class ClientProxy extends CommonProxy {
 
 	@Override
-	public Object getClientGuiElement(int ID, EntityPlayer player, World world,
-			int x, int y, int z) {
-		TileEntity te = world.getTileEntity(x, y, z);
+	public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
+		TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
 		if (te != null && te instanceof TileEntityMagReader) {
 			TileEntityMagReader icte = (TileEntityMagReader) te;
 			return new MagCardContainer(player.inventory, icte);

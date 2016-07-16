@@ -18,8 +18,7 @@ public class BlockLocation {
 	
 	private final boolean isWorld;
 	
-	private BlockLocation(IBlockAccess blockAccess, World world,
-	                      int x, int y, int z, boolean isWorld) {
+	private BlockLocation(IBlockAccess blockAccess, World world, int x, int y, int z, boolean isWorld) {
 		this.blockAccess = blockAccess;
 		this.world = world;
 		this.x = x;
