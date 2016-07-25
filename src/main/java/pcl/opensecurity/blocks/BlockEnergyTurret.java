@@ -7,12 +7,16 @@ import pcl.opensecurity.tileentity.TileEntityEnergyTurret;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
 public class BlockEnergyTurret extends BlockContainer {
@@ -24,15 +28,15 @@ public class BlockEnergyTurret extends BlockContainer {
 		random = new Random();
 		setHardness(6.0F);
 		setStepSound(soundTypeMetal);
-		setBlockName("energyTurret");
-		setBlockTextureName("opensecurity:machine_side");
+		setUnlocalizedName("energyTurret");
+		//setBlockTextureName("opensecurity:machine_side");
 	}
 
 	@Override
-	public void breakBlock (World world, int x, int y, int z, Block block, int meta) {
-		TileEntityEnergyTurret tileEntity = (TileEntityEnergyTurret) world.getTileEntity(x, y, z);
-		dropContent(tileEntity, world, tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
-		super.breakBlock(world, x, y, z, block, meta);
+	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+		TileEntityEnergyTurret tileEntity = (TileEntityEnergyTurret) worldIn.getTileEntity(pos);
+		dropContent(tileEntity, worldIn, pos.getX(), pos.getY(), pos.getZ());
+		super.breakBlock(worldIn, pos, state);
 	}
 
 	public void dropContent(IInventory chest, World world, int xCoord, int yCoord, int zCoord) {
@@ -69,12 +73,12 @@ public class BlockEnergyTurret extends BlockContainer {
 	}
 	
 	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int metadata, float clickX, float clickY, float clickZ) {
-		TileEntity tileEntity = world.getTileEntity(x, y, z);
-		if (tileEntity == null || player.isSneaking()) {
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ) {
+		TileEntity tileEntity = worldIn.getTileEntity(pos);
+		if (tileEntity == null || playerIn.isSneaking()) {
 			return false;
 		}
-		player.openGui(OpenSecurity.instance, 2, world, x, y, z);
+		playerIn.openGui(OpenSecurity.instance, 2, worldIn, pos.getX(), pos.getY(), pos.getZ());
 		return true;
 	}
 
@@ -84,9 +88,9 @@ public class BlockEnergyTurret extends BlockContainer {
 	}
 
  	@Override
- 	public int onBlockPlaced(World world, int x, int y, int z, int side, float subX, float subY, float subZ, int meta)
+ 	public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
  	{
- 		return side != 0 && (side == 1 || (double)subY <= 0.5D) ? meta : meta | 1;
+ 		return this.getStateFromMeta(meta);
  	}
 	
 	@Override
@@ -99,8 +103,8 @@ public class BlockEnergyTurret extends BlockContainer {
 		return false;
 	}
 
-	@Override
-	public boolean renderAsNormalBlock() {
-		return false;
-	}
+	//@Override
+	//public boolean renderAsNormalBlock() {
+	//	return false;
+	//}
 }

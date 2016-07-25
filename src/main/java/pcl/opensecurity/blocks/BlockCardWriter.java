@@ -2,64 +2,29 @@ package pcl.opensecurity.blocks;
 
 import java.util.Random;
 
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import pcl.opensecurity.OpenSecurity;
 import pcl.opensecurity.tileentity.TileEntityCardWriter;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockCardWriter extends BlockOSBase {
 
 	public BlockCardWriter() {
-		setBlockName("cardwriter");
+		setUnlocalizedName("cardwriter");
 	}
 
-	@SideOnly(Side.CLIENT)
-	public IIcon faceIcon;
-	@SideOnly(Side.CLIENT)
-	public IIcon sideIcon;
-
-	@SideOnly(Side.CLIENT)
-	@Override
-	public void registerBlockIcons(IIconRegister icon) {
-		faceIcon = icon.registerIcon("opensecurity:cardwriter_top");
-		sideIcon = icon.registerIcon("opensecurity:machine_side");
-	}
-
-	/**
-	 * From the specified side and block metadata retrieves the blocks texture.
-	 * Args: side, metadata
-	 */
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon(int side, int metadata) {
-		if (side == 4 && metadata == 0) {
-			return this.faceIcon;
-		}
-		if (metadata == 1 && side == 1)
-			return this.faceIcon;
-		else if (metadata == 0 && side == 0)
-			return this.faceIcon;
-		else if (metadata == 2 && side == 2)
-			return this.faceIcon;
-		else if (metadata == 3 && side == 3)
-			return this.faceIcon;
-		else if (metadata == 4 && side == 4)
-			return this.faceIcon;
-		else if (metadata == 5 && side == 5)
-			return this.faceIcon;
-		else
-			return this.sideIcon;
-	}
+	//public void registerBlockIcons(IIconRegister icon) {
+	//	faceIcon = icon.registerIcon("opensecurity:cardwriter_top");
+	//	sideIcon = icon.registerIcon("opensecurity:machine_side");
+	//}
 
 	@Override
 	public TileEntity createNewTileEntity(World var1, int var2) {
@@ -67,20 +32,20 @@ public class BlockCardWriter extends BlockOSBase {
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int metadata, float clickX, float clickY, float clickZ) {
-		TileEntity tileEntity = world.getTileEntity(x, y, z);
-		if (tileEntity == null || player.isSneaking()) {
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ) {
+		TileEntity tileEntity = worldIn.getTileEntity(pos);
+		if (tileEntity == null || playerIn.isSneaking()) {
 			return false;
 		}
-		player.openGui(OpenSecurity.instance, 0, world, x, y, z);
+		playerIn.openGui(OpenSecurity.instance, 0, worldIn, pos.getX(), pos.getY(), pos.getZ());
 		return true;
 	}
 
 	@Override
-	public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
-		TileEntityCardWriter tileEntity = (TileEntityCardWriter) world.getTileEntity(x, y, z);
-		dropContent(tileEntity, world, tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
-		super.breakBlock(world, x, y, z, block, meta);
+	public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+		TileEntityCardWriter tileEntity = (TileEntityCardWriter) worldIn.getTileEntity(pos);
+		dropContent(tileEntity, worldIn, pos.getX(), pos.getY(), pos.getZ());
+		super.breakBlock(worldIn, pos, state);
 	}
 
 	public void dropContent(IInventory chest, World world, int xCoord, int yCoord, int zCoord) {

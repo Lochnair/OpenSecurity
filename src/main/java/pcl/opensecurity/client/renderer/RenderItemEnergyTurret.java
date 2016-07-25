@@ -9,9 +9,7 @@ import org.lwjgl.opengl.GL11;
 
 import pcl.opensecurity.tileentity.TileEntityEnergyTurret;
 
-public class RenderItemEnergyTurret
-  implements IItemRenderer
-{
+public class RenderItemEnergyTurret implements IItemRenderer {
   private RenderEnergyTurret render;
   private TileEntityEnergyTurret entity = new TileEntityEnergyTurret();
   

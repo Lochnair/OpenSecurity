@@ -2,6 +2,7 @@ package pcl.opensecurity.blocks;
 
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import pcl.opensecurity.tileentity.TileEntityAlarm;
 
@@ -12,8 +13,8 @@ import pcl.opensecurity.tileentity.TileEntityAlarm;
 public class BlockAlarm extends BlockOSBase {
 
 	public BlockAlarm() {
-		setBlockName("alarm");
-		setBlockTextureName("opensecurity:alarm");
+		setUnlocalizedName("alarm");
+		//setBlockTextureName("opensecurity:alarm");
 	}
 
 	@Override
@@ -22,18 +23,8 @@ public class BlockAlarm extends BlockOSBase {
 	}
 
 	@Override
-	public void onNeighborBlockChange(World world, int xCoord, int yCoord, int zCoord, Block neighbourBlock) {
-		boolean isRedstonePowered = world.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
-		if (isRedstonePowered) {
-			// world.addBlockEvent(xCoord, yCoord, zCoord, this, 0, 0);
-		} else {
-			// world.addBlockEvent(xCoord, yCoord, zCoord, this, 1, 0);
-		}
-	}
-
-	@Override
-	public boolean onBlockEventReceived(World world, int x, int y, int z, int eventId, int eventPramater) {
-		TileEntityAlarm tile = (TileEntityAlarm) world.getTileEntity(x, y, z);
+	public boolean onBlockEventReceived(World world, BlockPos pos, int eventId, int eventPramater) {
+		TileEntityAlarm tile = (TileEntityAlarm) world.getTileEntity(pos);
 		if (eventId == 0 && !tile.computerPlaying) {
 			tile.setShouldStart(true);
 		}

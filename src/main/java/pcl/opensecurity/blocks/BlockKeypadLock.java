@@ -1,66 +1,41 @@
 package pcl.opensecurity.blocks;
 
 import pcl.opensecurity.tileentity.TileEntityKeypadLock;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 
 public class BlockKeypadLock extends BlockOSBase {
 
-	static IIcon textureTop;
-	static IIcon textureSide;
-	static IIcon textureBottom;
-	
 	public BlockKeypadLock()
 	{
 		super();
-		setBlockName("keypadlock");
+		setUnlocalizedName("keypadlock");
 	}
 	
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister iconRegister)
-	{
-		textureTop=iconRegister.registerIcon("opensecurity:machine_side");
-		textureBottom=iconRegister.registerIcon("opensecurity:machine_side");
-		textureSide=iconRegister.registerIcon("opensecurity:machine_side");
-	}
+	//@Override
+	//@SideOnly(Side.CLIENT)
+	//public void registerBlockIcons(IIconRegister iconRegister)
+	//{
+	//	textureTop=iconRegister.registerIcon("opensecurity:machine_side");
+	//	textureBottom=iconRegister.registerIcon("opensecurity:machine_side");
+	//	textureSide=iconRegister.registerIcon("opensecurity:machine_side");
+	//}  
 	
 	@Override
-    @SideOnly(Side.CLIENT)
-    public IIcon getIcon(IBlockAccess blockAccess, int x, int y, int z, int side)
-    {
-		if (side == 0)
-            return textureBottom;
-
-        if (side == 1)
-    		return textureTop;
-        
-        return textureSide;
-    }
-
-    //called when rendering as block in inventory
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon(int side, int par2)
-    {
-		return side == 1 ? textureTop : textureSide;
-    }
-    
-	
-	@Override
-	public boolean shouldSideBeRendered(IBlockAccess blockAccess, int x, int y, int z, int side)
+	public boolean shouldSideBeRendered(IBlockAccess worldIn, BlockPos pos, EnumFacing side)
 	{		
-		if (side>1)
+		if (side.getIndex()>1)
 		{
-			int mx=x, my=y, mz=z;
-		    switch(side)
+			int mx=pos.getX(), my=pos.getY(), mz=pos.getZ();
+		    switch(side.getIndex())
 			{
   			case 2: mz++; break;
 			case 3: mz--; break;
@@ -70,13 +45,12 @@ public class BlockKeypadLock extends BlockOSBase {
 				break;
 			}			
 
-		    int facing=blockAccess.getBlockMetadata(mx, my, mz);
-			if (facing==side)
+		    IBlockState state=worldIn.getBlockState(new BlockPos(mx, my, mz));
+			if (state.getProperties().get("facing").equals(side))
 				return false;			
 		}
 			
-		return super.shouldSideBeRendered(blockAccess,x,y,z,side);
-		/**/
+		return super.shouldSideBeRendered(worldIn,pos,side);
 	}
 	
 	
@@ -87,15 +61,16 @@ public class BlockKeypadLock extends BlockOSBase {
 	}
 	
 	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ)
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
 		//BLLog.debug("Activate with hit at %f, %f, %f", hitX, hitY, hitZ);
-		if (player.isSneaking())
+		if (playerIn.isSneaking())
 			return false;
 		
 		//if it wasn't the face, false
-		int facing=world.getBlockMetadata(x, y, z);
-		if (facing!=side)
+		//int facing=worldIn.getBlockMetadata(x, y, z);
+		
+		if (state.getProperties().get("facing").equals(side.getIndex()))
 		{
 			//BLLog.debug("wrong side.");
 			return false;
@@ -103,7 +78,7 @@ public class BlockKeypadLock extends BlockOSBase {
 		//BLLog.debug("side = %d", side);
 		float relX=0f,relY=hitY*16f;
 		//normalize face-relative "x" pixel position
-		switch(facing)
+		switch(side.getIndex())
 		{
 		case 2: relX=hitX*16f; break;
 		case 3: relX=(1f-hitX)*16f; break;
@@ -134,8 +109,8 @@ public class BlockKeypadLock extends BlockOSBase {
 		//ok! hit a button!
 		//BLLog.debug("Hit button on row %d in col %d", row, col);
 		int idx = (2-col)+3*(3-row);
-		TileEntityKeypadLock te=(TileEntityKeypadLock)world.getTileEntity(x,y,z);
-		te.pressedButton(player,idx);
+		TileEntityKeypadLock te=(TileEntityKeypadLock)worldIn.getTileEntity(pos);
+		te.pressedButton(playerIn,idx);
 		return true;
 	
 	}

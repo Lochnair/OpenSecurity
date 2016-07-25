@@ -2,34 +2,23 @@ package pcl.opensecurity.blocks;
 
 import java.util.Random;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import pcl.opensecurity.ContentRegistry;
-import pcl.opensecurity.OpenSecurity;
-import pcl.opensecurity.tileentity.TileEntityDoorController;
-import pcl.opensecurity.tileentity.TileEntitySecureDoor;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDoor;
-import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.IconFlipped;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import pcl.opensecurity.ContentRegistry;
+import pcl.opensecurity.tileentity.TileEntitySecureDoor;
 
 public class BlockSecurityDoor extends BlockDoor {
 	public Item placerItem;
-
-	@SideOnly(Side.CLIENT)
-	private IIcon[] iconsUpper;
-	@SideOnly(Side.CLIENT)
-	private IIcon[] iconsLower;
 
 	public BlockSecurityDoor()
 	{
@@ -39,11 +28,11 @@ public class BlockSecurityDoor extends BlockDoor {
 		this.setBlockBounds(0.5F - f, 0.0F, 0.5F - f, 0.5F + f, f1, 0.5F + f);
 		this.setHardness(400F);
 		this.setResistance(6000F);
-		this.setBlockName("securityDoor");
-		this.setBlockTextureName(OpenSecurity.MODID + ":door_secure_upper");
+		this.setUnlocalizedName("securityDoor");
+		//this.setBlockTextureName(OpenSecurity.MODID + ":door_secure_upper");
 	}
 
-	@SideOnly(Side.CLIENT)
+/*	@SideOnly(Side.CLIENT)
 	public IIcon getIcon(IBlockAccess blockAccess, int x, int y, int z, int par5)
 	{
 		if (par5 != 1 && par5 != 0)
@@ -98,29 +87,29 @@ public class BlockSecurityDoor extends BlockDoor {
 		this.iconsLower[0] = p_149651_1_.registerIcon(OpenSecurity.MODID + ":door_secure_lower");
 		this.iconsUpper[1] = new IconFlipped(this.iconsUpper[0], true, false);
 		this.iconsLower[1] = new IconFlipped(this.iconsLower[0], true, false);
-	}
+	}*/
 
 	@Override
-	public boolean onBlockActivated(World world, int par2, int par3, int par4, EntityPlayer player, int par6, float par7, float par8, float par9)
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ)
 	{
 		return false;
 	}
 
 	@Override
-	public Item getItemDropped(int p_149650_1_, Random p_149650_2_, int p_149650_3_)
+	public Item getItemDropped(IBlockState state, Random rand, int fortune)
 	{
 		return ContentRegistry.securityDoorItem;
 	}
 
 	@Override
-	public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z) {
+	public ItemStack getPickBlock(MovingObjectPosition target, World world, BlockPos pos) {
 		return new ItemStack(ContentRegistry.securityDoorItem);
 
 	}
 
 	@Override
-	public void onBlockClicked(World world, int x, int y, int z, EntityPlayer player) {
-		TileEntitySecureDoor tileEntity = (TileEntitySecureDoor) world.getTileEntity(x, y, z);
+	public void onBlockClicked(World world, BlockPos pos, EntityPlayer player) {
+		TileEntitySecureDoor tileEntity = (TileEntitySecureDoor) world.getTileEntity(pos);
 		//If the user is not the owner, or the user is not in creative drop out.
 		if((tileEntity.getOwner()!=null && tileEntity.getOwner().equals(player.getUniqueID().toString())) || player.capabilities.isCreativeMode){
 			this.setResistance(4F);
@@ -131,50 +120,82 @@ public class BlockSecurityDoor extends BlockDoor {
 		}
 	}
 	
+    /**
+     * Called when a neighboring block changes.
+     */
 	@Override
-	public void onNeighborBlockChange(World world, int x, int y, int z, Block block)
-	{
-		int meta = world.getBlockMetadata(x, y, z);
+    public void onNeighborBlockChange(World worldIn, BlockPos pos, IBlockState state, Block neighborBlock)
+    {
+        if (state.getValue(HALF) == BlockDoor.EnumDoorHalf.UPPER)
+        {
+            BlockPos blockpos = pos.down();
+            IBlockState iblockstate = worldIn.getBlockState(blockpos);
 
-		if ((meta & 8) == 0) //Top door block
-		{
+            if (iblockstate.getBlock() != this)
+            {
+                worldIn.setBlockToAir(pos);
+            }
+            else if (neighborBlock != this)
+            {
+                this.onNeighborBlockChange(worldIn, blockpos, iblockstate, neighborBlock);
+            }
+        }
+        else
+        {
+            boolean flag1 = false;
+            BlockPos blockpos1 = pos.up();
+            IBlockState iblockstate1 = worldIn.getBlockState(blockpos1);
 
-			if (world.getBlock(x, y + 1, z) != this)
-			{
-				world.setBlockToAir(x, y, z);
-			}
+            if (iblockstate1.getBlock() != this)
+            {
+                worldIn.setBlockToAir(pos);
+                flag1 = true;
+            }
 
-			if (!World.doesBlockHaveSolidTopSurface(world, x, y - 1, z))
-			{
-				world.setBlockToAir(x, y, z);
+            if (!World.doesBlockHaveSolidTopSurface(worldIn, pos.down()))
+            {
+                worldIn.setBlockToAir(pos);
+                flag1 = true;
 
-				if (world.getBlock(x, y + 1, z) == this)
-				{
-					world.setBlockToAir(x, y + 1, z);
-				}
-			}
-		}
-		else //Bottom door block
-		{
-			if (world.getBlock(x, y - 1, z) != this)
-			{
-				world.setBlockToAir(x, y, z);
-			}
+                if (iblockstate1.getBlock() == this)
+                {
+                    worldIn.setBlockToAir(blockpos1);
+                }
+            }
 
-			if (block != this)
-			{
-				this.onNeighborBlockChange(world, x, y - 1, z, block);
-			}
-		}
-	}
+            if (flag1)
+            {
+                if (!worldIn.isRemote)
+                {
+                    this.dropBlockAsItem(worldIn, pos, state, 0);
+                }
+            }
+            else
+            {
+                boolean flag = worldIn.isBlockPowered(pos) || worldIn.isBlockPowered(blockpos1);
+
+                if ((flag || neighborBlock.canProvidePower()) && neighborBlock != this && flag != ((Boolean)iblockstate1.getValue(POWERED)).booleanValue())
+                {
+                    worldIn.setBlockState(blockpos1, iblockstate1.withProperty(POWERED, Boolean.valueOf(flag)), 2);
+
+                    if (flag != ((Boolean)state.getValue(OPEN)).booleanValue())
+                    {
+                        worldIn.setBlockState(pos, state.withProperty(OPEN, Boolean.valueOf(flag)), 2);
+                        worldIn.markBlockRangeForRenderUpdate(pos, pos);
+                        worldIn.playAuxSFXAtEntity((EntityPlayer)null, flag ? 1003 : 1006, pos, 0);
+                    }
+                }
+            }
+        }
+    }
 
 	@Override
-	public boolean hasTileEntity(int metadata) {
+	public boolean hasTileEntity(IBlockState state) {
 		return true;
 	}
 	
 	@Override
-	public TileEntity createTileEntity(World p_149915_1_, int p_149915_2_) {
+	public TileEntity createTileEntity(World p_149915_1_, IBlockState state) {
 		return new TileEntitySecureDoor();
 	}
 	

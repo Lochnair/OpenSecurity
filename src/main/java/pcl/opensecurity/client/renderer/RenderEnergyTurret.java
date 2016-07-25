@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
@@ -12,9 +13,7 @@ import org.lwjgl.opengl.GL11;
 import pcl.opensecurity.client.model.ModelEnergyTurret;
 import pcl.opensecurity.tileentity.TileEntityEnergyTurret;
 
-public class RenderEnergyTurret
-  extends TileEntitySpecialRenderer
-{
+public class RenderEnergyTurret  extends TileEntitySpecialRenderer {
   private final ModelEnergyTurret model;
   ResourceLocation textures;
   
@@ -24,7 +23,7 @@ public class RenderEnergyTurret
     this.textures = new ResourceLocation("opensecurity:turret.png");
   }
   
-  public void renderTileEntityAt(TileEntity te, double x, double y, double z, float scale)
+  public void renderTileEntityAt(TileEntity te, BlockPos pos, float scale)
   {
     GL11.glPushMatrix();
     GL11.glTranslatef((float)x, (float)y, (float)z);

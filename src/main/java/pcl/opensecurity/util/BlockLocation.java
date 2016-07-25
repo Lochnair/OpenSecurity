@@ -4,7 +4,6 @@ import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class BlockLocation {
 	
@@ -39,7 +38,7 @@ public class BlockLocation {
 	}
 	/** Returns a block location from the tile entity's location. */
 	public static BlockLocation get(TileEntity tileEntity) {
-		return get(tileEntity.getWorldObj(), tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
+		return get(tileEntity.getWorldObj(), pos.getX(), pos.getY(), pos.getZ());
 	}
 	
 	// Relative instantiation methods

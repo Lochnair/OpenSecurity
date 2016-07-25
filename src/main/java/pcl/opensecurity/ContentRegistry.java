@@ -48,12 +48,13 @@ import pcl.opensecurity.tileentity.TileEntityRFIDReader;
 import pcl.opensecurity.tileentity.TileEntitySecureDoor;
 import pcl.opensecurity.tileentity.TileEntitySwitchableHub;
 import pcl.opensecurity.util.OSBreakEvent;
-import cpw.mods.fml.common.registry.EntityRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -248,10 +249,10 @@ public class ContentRegistry {
 				return li.cil.oc.api.FileSystem.fromClass(OpenSecurity.class, OpenSecurity.MODID, "/lua/SecureOS/SecureOS/");
 			}
 		};
-		secureOS_disk = li.cil.oc.api.Items.registerFloppy("SecureOS", 1, factory);
+		secureOS_disk = li.cil.oc.api.Items.registerFloppy("SecureOS", EnumDyeColor.RED, factory);
 
 		ItemStack redstone = new ItemStack(Items.redstone);
-		ItemStack stone_button = new ItemStack((Block)Block.blockRegistry.getObject("stone_button"));
+		ItemStack stone_button = new ItemStack(Item.getItemFromBlock(Blocks.stone_button));
 		ItemStack paper = new ItemStack(Items.paper);
 		ItemStack noteblock = new ItemStack(Blocks.noteblock);
 		ItemStack door = new ItemStack(Items.iron_door);

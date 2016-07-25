@@ -9,9 +9,7 @@ import org.lwjgl.opengl.GL11;
 import pcl.opensecurity.client.model.ModelEnergyBolt;
 import pcl.opensecurity.entity.EntityEnergyBolt;
 
-public class RenderEntityEnergyBolt
-  extends Render
-{
+public class RenderEntityEnergyBolt extends Render {
   private static final ResourceLocation textures = new ResourceLocation("opensecurity:turret.png");
   private final ModelEnergyBolt model;
   

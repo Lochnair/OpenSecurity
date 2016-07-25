@@ -4,8 +4,7 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 
-public class ModelEnergyTurret
-  extends ModelBase
+public class ModelEnergyTurret extends ModelBase
 {
   public ModelRenderer base;
   public ModelRenderer rotorBase;

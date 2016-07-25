@@ -2,8 +2,8 @@ package pcl.opensecurity;
 
 import java.io.File;
 
-import cpw.mods.fml.client.registry.ClientRegistry;
-import cpw.mods.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import pcl.opensecurity.CommonProxy;
 import pcl.opensecurity.client.renderer.RenderEnergyTurret;
@@ -52,12 +53,12 @@ public class ClientProxy extends CommonProxy {
 
 	    RenderEnergyTurret turretRenderer = new RenderEnergyTurret();
 	    ClientRegistry.bindTileEntitySpecialRenderer(TileEntityEnergyTurret.class, turretRenderer);
-	    MinecraftForgeClient.registerItemRenderer(Item.getItemFromBlock(ContentRegistry.energyTurretBlock), new RenderItemEnergyTurret(turretRenderer));
+	    ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(ContentRegistry.energyTurretBlock), 0, TileEntityEnergyTurret.class);
 	    RenderingRegistry.registerEntityRenderingHandler(EntityEnergyBolt.class, new RenderEntityEnergyBolt());
 		
 	    RenderKeypad keypadRenderer = new RenderKeypad();
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityKeypadLock.class, keypadRenderer);
-		MinecraftForgeClient.registerItemRenderer(new ItemStack(ContentRegistry.keypadLockBlock).getItem(), keypadRenderer);
+		ForgeHooksClient.registerTESRItemStack(Item.getItemFromBlock(ContentRegistry.keypadLockBlock), 0, TileEntityKeypadLock.class );
 	    
 		OpenSecurity.logger.info("Registered TESRs");
 	}
@@ -80,7 +81,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public World getWorld(int dimId) {
 		World world = Minecraft.getMinecraft().theWorld;
-		if (world.provider.dimensionId == dimId) {
+		if (world.provider.getDimensionId() == dimId) {
 			return world;
 		}
 		return null;

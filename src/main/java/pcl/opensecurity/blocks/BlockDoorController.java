@@ -1,10 +1,10 @@
 package pcl.opensecurity.blocks;
 
-import li.cil.oc.common.item.Wrench;
+//import li.cil.oc.common.item.Wrench;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockGlass;
 import net.minecraft.block.BlockStainedGlass;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,21 +12,21 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import pcl.opensecurity.ContentRegistry;
 import pcl.opensecurity.tileentity.TileEntityDoorController;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockDoorController extends BlockOSBase {
 
 	public BlockDoorController() {
 		super();
-		setBlockName("doorController");
-		setBlockTextureName("opensecurity:door_controller");
+		setUnlocalizedName("doorController");
+		//setBlockTextureName("opensecurity:door_controller");
 		this.setHardness(400F);
 		this.setResistance(6000F);
 	}
@@ -35,17 +35,16 @@ public class BlockDoorController extends BlockOSBase {
 	 * Called when the block is placed in the world.
 	 */
 	@Override
-	public void onBlockPlacedBy(World par1World, int x, int y, int z, EntityLivingBase par5EntityLivingBase, ItemStack par6ItemStack) {
-		TileEntity te = par1World.getTileEntity(x, y, z);
-		((TileEntityDoorController) te).setOwner(par5EntityLivingBase.getUniqueID().toString());
-		((TileEntityDoorController) te).overrideTexture(ContentRegistry.DoorControllerBlock, new ItemStack(Item.getItemFromBlock(ContentRegistry.DoorControllerBlock)), ForgeDirection.getOrientation(1));
+	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+		TileEntity te = worldIn.getTileEntity(pos);
+		((TileEntityDoorController) te).setOwner(placer.getUniqueID().toString());
 	}
 
 	@Override
-	public void onBlockClicked(World world, int x, int y, int z, EntityPlayer player) {
-		TileEntityDoorController tileEntity = (TileEntityDoorController) world.getTileEntity(x, y, z);
+	public void onBlockClicked(World worldIn, BlockPos pos, EntityPlayer playerIn) {
+		TileEntityDoorController tileEntity = (TileEntityDoorController) worldIn.getTileEntity(pos);
 		//If the user is not the owner, or the user is not in creative drop out.
-		if((tileEntity.getOwner()!=null && tileEntity.getOwner().equals(player.getUniqueID().toString())) || player.capabilities.isCreativeMode){
+		if((tileEntity.getOwner()!=null && tileEntity.getOwner().equals(playerIn.getUniqueID().toString())) || playerIn.capabilities.isCreativeMode){
 			this.setResistance(4F);
 			this.setHardness(6F);
 		} else {
@@ -55,13 +54,13 @@ public class BlockDoorController extends BlockOSBase {
 	}
 	
 	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float clickX, float clickY, float clickZ) {
-		TileEntityDoorController tileEntity = (TileEntityDoorController) world.getTileEntity(x, y, z);
-		if (tileEntity == null || player.isSneaking()) {
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ) {
+		TileEntityDoorController tileEntity = (TileEntityDoorController) worldIn.getTileEntity(pos);
+		if (tileEntity == null || playerIn.isSneaking()) {
 			return false;
 		}
-
-		//If the user is not the owner, or the user is not in creative drop out.
+//Block camo is going to be hard to implement in 1.8.9 I'll come back to this.
+/*		//If the user is not the owner, or the user is not in creative drop out.
 		if(tileEntity.getOwner()!=null){
 			if(!tileEntity.getOwner().equals(player.getUniqueID().toString()) && !player.capabilities.isCreativeMode) {
 				if(!tileEntity.getOwner().isEmpty()) {
@@ -80,7 +79,7 @@ public class BlockDoorController extends BlockOSBase {
 					} else {
 						tileEntity.overrideTexture(block, player.getCurrentEquippedItem().splitStack(1), ForgeDirection.getOrientation(side));
 					}
-					world.scheduleBlockUpdate(x, y, z, tileEntity.block, 5);
+					world.scheduleBlockUpdate(pos, tileEntity.block, 5);
 					if (!world.isRemote) {
 						ItemStack testAgainst = new ItemStack(oldBlock);
 						if (!testAgainst.getItem().equals(Item.getItemFromBlock(ContentRegistry.DoorControllerBlock))) {
@@ -99,8 +98,8 @@ public class BlockDoorController extends BlockOSBase {
 				}
 			}
 			tileEntity.overrideTexture(ContentRegistry.DoorControllerBlock, new ItemStack(Item.getItemFromBlock(ContentRegistry.DoorControllerBlock)), ForgeDirection.getOrientation(side));
-			world.scheduleBlockUpdate(x, y, z, tileEntity.block, 5);
-		}
+			world.scheduleBlockUpdate(pos, tileEntity.block, 5);
+		} */
 		return true;
 	}
 
@@ -109,75 +108,16 @@ public class BlockDoorController extends BlockOSBase {
 		return new TileEntityDoorController();
 	}
 
-	@SideOnly(Side.CLIENT)
-	public static IIcon topIcon;
-	@SideOnly(Side.CLIENT)
-	public static IIcon bottomIcon;
-	@SideOnly(Side.CLIENT)
-	public static IIcon leftIcon;
-	@SideOnly(Side.CLIENT)
-	public static IIcon rightIcon;
-	@SideOnly(Side.CLIENT)
-	public static IIcon frontIcon;
-	@SideOnly(Side.CLIENT)
-	public static IIcon backIcon;
+	//@SideOnly(Side.CLIENT)
+	//@Override
+	//public void registerBlockIcons(IIconRegister icon) {
+	//	topIcon = icon.registerIcon("opensecurity:machine_side");
+	//	bottomIcon = icon.registerIcon("opensecurity:machine_side");
+	//	leftIcon = rightIcon = frontIcon = backIcon = icon.registerIcon("opensecurity:door_controller");
+	//}
 
-	@SideOnly(Side.CLIENT)
-	@Override
-	public void registerBlockIcons(IIconRegister icon) {
-		topIcon = icon.registerIcon("opensecurity:machine_side");
-		bottomIcon = icon.registerIcon("opensecurity:machine_side");
-		leftIcon = rightIcon = frontIcon = backIcon = icon.registerIcon("opensecurity:door_controller");
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon(int side, int metadata) {
-		if (side == 0) {
-			return bottomIcon;
-		} else if (side == 1) {
-			return topIcon;
-		} else if (side == 2) {
-			return backIcon;
-		} else if (side == 3) {
-			return frontIcon;
-		} else if (side == 4) {
-			return rightIcon;
-		} else if (side == 5) {
-			return leftIcon;
-		}
-		return leftIcon;
-	}
-
-	@Override
-	public boolean isOpaqueCube(){
-		return false;
-	}
-
-	/**
-	 * From the specified side and block metadata retrieves the blocks texture.
-	 * Args: side, metadata
-	 */
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon(IBlockAccess block, int x, int y, int z, int side) {
-		//int metadata = block.getBlockMetadata(x, y, z);
-		TileEntityDoorController te = (TileEntityDoorController) block.getTileEntity(x, y, z);
-		IIcon[] thisBlockTextures = new IIcon[6];
-
-		if (te.DoorControllerCamo[0] != null) {
-			te.overrideTexture(te.DoorControllerCamo[0]);
-		}
-		for (int getSide = 0; getSide < thisBlockTextures.length; getSide++) {
-			if(te.blockTextures[getSide] != null) {
-				if(side == getSide) {
-					return te.blockTextures[getSide];
-				}
-			}
-		}			
-
-
-		return topIcon;
-	}
-
+	//@Override
+	//public boolean isOpaqueCube(){
+	//	return false;
+	//}
 }

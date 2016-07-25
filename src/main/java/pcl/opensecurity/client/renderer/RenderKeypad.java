@@ -15,9 +15,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.client.IItemRenderer;
 
-public class RenderKeypad extends TileEntitySpecialRenderer implements IItemRenderer {
+@SuppressWarnings("rawtypes")
+public class RenderKeypad extends TileEntitySpecialRenderer {
 
 	static float texPixel=1.0f/16f;
 	
@@ -145,41 +145,6 @@ public class RenderKeypad extends TileEntitySpecialRenderer implements IItemRend
 	public RenderKeypad()
 	{
 		super();
-	}
-	
-	@Override
-	public void renderTileEntityAt(TileEntity tileEntity, double x, double y, double z, float f) 
-	{
-		//Temp fix until I can debug this.
-		//float light = tileEntity.getWorldObj().getLightBrightnessForSkyBlocks(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, 15);
-		//OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, light, light);
-		
-		TileEntityKeypadLock te=(TileEntityKeypadLock)tileEntity;
-		Tessellator tessellator=Tessellator.instance;
-		
-		int bx=te.xCoord, by=te.yCoord, bz=te.zCoord;
-		
-		World world=te.getWorldObj();
-		
-		float brightness=ContentRegistry.keypadLockBlock.getLightValue(world, bx, by, bz);
-		int light=world.getLightBrightnessForSkyBlocks(bx,by,bz,0);
-		
-		tessellator.setColorOpaque_F(brightness,brightness,brightness);
-		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float)(light&0xffff),(float)(light>>16));
-		
-		GL11.glPushMatrix();
-		GL11.glTranslatef((float)x, (float)y,(float)z);
-		GL11.glTranslatef(.5f,0,.5f);
-		GL11.glRotatef(te.getAngle(),0f,1f,0f);
-		GL11.glTranslatef(-.5f,0,-.5f);
-		
-		long time = world.getTotalWorldTime();
-		
-		this.bindTexture(new ResourceLocation("opensecurity", "textures/blocks/machine_side.png"));
-
-		drawKeypadBlock(te, time);
-		
-		GL11.glPopMatrix();
 	}
 	
 	public void drawKeypadBlock(TileEntityKeypadLock keylock, long time)
@@ -368,6 +333,41 @@ public class RenderKeypad extends TileEntitySpecialRenderer implements IItemRend
 
 		drawKeypadBlock( null, 10000);
 			
+		GL11.glPopMatrix();
+	}
+
+	@Override
+	public void renderTileEntityAt(TileEntity te, double x, double y, double z, float partialTicks, int destroyStage) {
+		//Temp fix until I can debug this.
+		//float light = tileEntity.getWorldObj().getLightBrightnessForSkyBlocks(pos.getX(), pos.getY(), pos.getZ(), 15);
+		//OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, light, light);
+		
+		TileEntityKeypadLock te1=(TileEntityKeypadLock)te;
+		Tessellator tessellator=Tessellator.getInstance();
+		
+		int bx=te1.getPos().getX(), by=te1.getPos().getY(), bz=te1.getPos().getZ();
+		
+		World world=te1.getWorld();
+		
+		float brightness=ContentRegistry.keypadLockBlock.getLightValue();
+		int light=(int) world.getLightBrightness(te.getPos());
+		
+		
+		tessellator.setColorOpaque_F(brightness,brightness,brightness);
+		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float)(light&0xffff),(float)(light>>16));
+		
+		GL11.glPushMatrix();
+		GL11.glTranslatef((float)x, (float)y,(float)z);
+		GL11.glTranslatef(.5f,0,.5f);
+		GL11.glRotatef(te1.getAngle(),0f,1f,0f);
+		GL11.glTranslatef(-.5f,0,-.5f);
+		
+		long time = world.getTotalWorldTime();
+		
+		this.bindTexture(new ResourceLocation("opensecurity", "textures/blocks/machine_side.png"));
+
+		drawKeypadBlock(te1, time);
+		
 		GL11.glPopMatrix();
 	}
 

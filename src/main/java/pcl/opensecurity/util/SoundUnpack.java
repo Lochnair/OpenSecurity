@@ -8,8 +8,8 @@ import java.net.URL;
 import java.util.Map;
 
 import pcl.opensecurity.BuildInfo;
-import cpw.mods.fml.relauncher.IFMLCallHook;
-import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
+import net.minecraftforge.fml.relauncher.IFMLCallHook;
+import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 
 public class SoundUnpack implements IFMLLoadingPlugin, IFMLCallHook {
 	public void load() {

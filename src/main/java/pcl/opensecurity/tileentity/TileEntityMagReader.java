@@ -12,6 +12,7 @@ import li.cil.oc.api.network.Visibility;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import pcl.opensecurity.Config;
 import pcl.opensecurity.OpenSecurity;
 import pcl.opensecurity.items.ItemMagCard;
@@ -92,7 +93,7 @@ public class TileEntityMagReader extends TileEntityMachineBase implements Enviro
 		nbt.setString("eventName", eventName);
 	}
 
-	public boolean doRead(ItemStack itemStack, EntityPlayer em, int side) {
+	public boolean doRead(ItemStack itemStack, EntityPlayer em, EnumFacing side) {
 		if (itemStack != null && itemStack.getItem() instanceof ItemMagCard && itemStack.stackTagCompound != null && itemStack.stackTagCompound.hasKey("data")) {
 			data = itemStack.stackTagCompound.getString("data");
 			String uuid = itemStack.stackTagCompound.getString("uuid");

@@ -12,7 +12,7 @@ import pcl.opensecurity.containers.KVMContainer;
 import pcl.opensecurity.tileentity.TileEntityCardWriter;
 import pcl.opensecurity.tileentity.TileEntityEnergyTurret;
 import pcl.opensecurity.tileentity.TileEntityKVM;
-import cpw.mods.fml.common.network.IGuiHandler;
+import net.minecraftforge.fml.common.network.IGuiHandler;
 
 /**
  * @author Caitlyn

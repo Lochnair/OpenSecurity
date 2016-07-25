@@ -29,7 +29,7 @@ public class RenderDisplayPanel extends TileEntitySpecialRenderer {
 
 		TileEntityDisplayPanel panel = (TileEntityDisplayPanel) tileEntity;
 
-		float light = tileEntity.getWorldObj().getLightBrightnessForSkyBlocks(tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, 15);
+		float light = tileEntity.getWorldObj().getLightBrightnessForSkyBlocks(pos.getX(), pos.getY(), pos.getZ(), 15);
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, light, light);
 
 		RenderManager renderMan = RenderManager.instance;
