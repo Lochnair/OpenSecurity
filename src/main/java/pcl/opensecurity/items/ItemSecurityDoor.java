@@ -80,10 +80,10 @@ public class ItemSecurityDoor extends ItemDoor {
             b0 = 1;
         }
 
-        int i1 = (world.getBlock(x - b0, y, z - b1).isNormalCube() ? 1 : 0) + (world.getBlock(x - b0, y + 1, z - b1).isNormalCube() ? 1 : 0);
-        int j1 = (world.getBlock(x + b0, y, z + b1).isNormalCube() ? 1 : 0) + (world.getBlock(x + b0, y + 1, z + b1).isNormalCube() ? 1 : 0);
-        boolean flag = world.getBlock(x - b0, y, z - b1) == block || world.getBlock(x - b0, y + 1, z - b1) == block;
-        boolean flag1 = world.getBlock(x + b0, y, z + b1) == block || world.getBlock(x + b0, y + 1, z + b1) == block;
+        int i1 = (world.getBlockState(pos.west(b0).north(b1)).isNormalCube() ? 1 : 0) + (world.getBlockState(pos.west(b0).up(1).north(b1)).isNormalCube() ? 1 : 0);
+        int j1 = (world.getBlockState(pos.east(b0).south(b1)).isNormalCube() ? 1 : 0) + (world.getBlockState(pos.east(b0).up(1).south(b1)).isNormalCube() ? 1 : 0);
+        boolean flag = world.getBlockState(pos.west(b0).north(b1)) == block || world.getBlockState(pos.west(b0).up(1).north(b1)) == block;
+        boolean flag1 = world.getBlockState(pos.east(b0).south(b1)) == block || world.getBlockState(pos.east(b0).up(1).south(b1)) == block;
         boolean flag2 = false;
 
         if (flag && !flag1)
@@ -98,10 +98,11 @@ public class ItemSecurityDoor extends ItemDoor {
         world.setBlock(x, y, z, block, direction, 2);
         world.setBlock(x, y + 1, z, block, 8 | (flag2 ? 1 : 0), 2);
         TileEntitySecureDoor tile = (TileEntitySecureDoor) world.getTileEntity(x, y, z);
+        TileEntitySecureDoor tile = (TileEntitySecureDoor) world.getTileEntity(pos);
         tile.setOwner(entityPlayer.getUniqueID().toString());
-        TileEntitySecureDoor tileTop = (TileEntitySecureDoor) world.getTileEntity(x, y + 1, z);
+        TileEntitySecureDoor tileTop = (TileEntitySecureDoor) world.getTileEntity(pos.up(1));
         tileTop.setOwner(entityPlayer.getUniqueID().toString());
-        world.notifyBlocksOfNeighborChange(x, y, z, block);
-        world.notifyBlocksOfNeighborChange(x, y + 1, z, block);
+        world.notifyNeighborsOfStateChange(pos, block);
+        world.notifyNeighborsOfStateChange(pos.up(1), block);
     }
 }
