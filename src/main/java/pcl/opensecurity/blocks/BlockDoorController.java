@@ -3,8 +3,9 @@ package pcl.opensecurity.blocks;
 import li.cil.oc.common.item.Wrench;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockGlass;
+import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.BlockStainedGlass;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,23 +13,21 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import pcl.opensecurity.ContentRegistry;
+import pcl.opensecurity.OpenSecurity;
 import pcl.opensecurity.tileentity.TileEntityDoorController;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class BlockDoorController extends BlockOSBase {
 
+	public static final PropertyDirection FACING = BlockHorizontal.FACING;
+
 	public BlockDoorController() {
 		super();
-		setBlockName("doorController");
-		setBlockTextureName("opensecurity:door_controller");
 		this.setHardness(400F);
 		this.setResistance(6000F);
+		this.setUnlocalizedName("doorController");
 	}
 
 	/**

@@ -3,17 +3,22 @@
  */
 package pcl.opensecurity;
 
-import cpw.mods.fml.common.registry.EntityRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
 import li.cil.oc.api.fs.FileSystem;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.registry.EntityRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.registry.IForgeRegistry;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import pcl.opensecurity.blocks.*;
 import pcl.opensecurity.client.CreativeTab;
@@ -29,6 +34,7 @@ import java.util.concurrent.Callable;
  * @author Caitlyn
  *
  */
+@Mod.EventBusSubscriber
 public class ContentRegistry {
 
 	public static Block magCardReaderBlock;
@@ -85,128 +91,114 @@ public class ContentRegistry {
 		OpenSecurity.logger.info("Registered Events");
 	}
 
-	private static void registerItems() {
-		magCardItem = new ItemMagCard();
-		GameRegistry.registerItem(magCardItem, "opensecurity.magCard");
-		magCardItem.setCreativeTab(CreativeTab);
-
-		rfidCardItem = new ItemRFIDCard();
-		GameRegistry.registerItem(rfidCardItem, "opensecurity.rfidCard");
-		rfidCardItem.setCreativeTab(CreativeTab);
-
-		rfidReaderCardItem = new ItemRFIDReaderCard();
-		GameRegistry.registerItem(rfidReaderCardItem, "opensecurity.rfidReaderCard");
-		rfidReaderCardItem.setCreativeTab(CreativeTab);
-		
-		secureNetworkCardItem = new ItemSecureNetworkCard();
-		GameRegistry.registerItem(secureNetworkCardItem, "opensecurity.secureNetworkCard");
-		secureNetworkCardItem.setCreativeTab(CreativeTab);
-				
-		securityDoorItem = new ItemSecurityDoor(SecurityDoorBlock);
-		GameRegistry.registerItem(securityDoorItem, "opensecurity.securityDoor");
-		securityDoorItem.setCreativeTab(CreativeTab);
-		
-		securityDoorPrivateItem = new ItemSecurityDoorPrivate(SecurityDoorBlock);
-		GameRegistry.registerItem(securityDoorPrivateItem, "opensecurity.securityDoorPrivate");
-		securityDoorItem.setCreativeTab(CreativeTab);
-		
-		damageUpgradeItem = new ItemDamageUpgrade();
-		GameRegistry.registerItem(damageUpgradeItem, "opensecurity.damageUpgrade");
-		damageUpgradeItem.setCreativeTab(CreativeTab);
-		
-		cooldownUpgradeItem = new ItemCooldownUpgrade();
-		GameRegistry.registerItem(cooldownUpgradeItem, "opensecurity.cooldownUpgrade");
-		cooldownUpgradeItem.setCreativeTab(CreativeTab);
-		
-		energyUpgradeItem = new ItemEnergyUpgrade();
-		GameRegistry.registerItem(energyUpgradeItem, "opensecurity.energyUpgrade");
-		energyUpgradeItem.setCreativeTab(CreativeTab);
-		
-		movementUpgradeItem = new ItemMovementUpgrade();
-		GameRegistry.registerItem(movementUpgradeItem, "opensecurity.movementUpgrade");
-		movementUpgradeItem.setCreativeTab(CreativeTab);
-		
-		OpenSecurity.logger.info("Registered Items");
+	private static void registerBlock(Block block, String unlocalizedName) {
+		GameRegistry.register(block.setCreativeTab(CreativeTab).setRegistryName(unlocalizedName));
+		GameRegistry.register(new ItemBlock(block).setRegistryName(block.getRegistryName()));
 	}
 
+	private static void registerItem(Item item, String unlocalizedName) {
+		GameRegistry.register(item.setCreativeTab(CreativeTab).setRegistryName(unlocalizedName));
+	}
+	
 	private static void registerBlocks() {
 		magCardReaderBlock = new BlockMagReader();
-		GameRegistry.registerBlock(magCardReaderBlock, "magreader");
-		magCardReaderBlock.setCreativeTab(CreativeTab);
+		registerBlock(magCardReaderBlock, "magreader");
 		GameRegistry.registerTileEntity(TileEntityMagReader.class, "MagCardTE");
 
 		rfidCardReaderBlock = new BlockRFIDReader();
-		GameRegistry.registerBlock(rfidCardReaderBlock, "rfidreader");
-		rfidCardReaderBlock.setCreativeTab(CreativeTab);
+		registerBlock(rfidCardReaderBlock, "rfidcardreader");
 		GameRegistry.registerTileEntity(TileEntityRFIDReader.class, "RFIDTE");
 
 		cardWriterBlock = new BlockCardWriter();
-		GameRegistry.registerBlock(cardWriterBlock, "rfidwriter");
-		cardWriterBlock.setCreativeTab(CreativeTab);
+		registerBlock(cardWriterBlock, "rfidwriter");
 		GameRegistry.registerTileEntity(TileEntityCardWriter.class, "RFIDWriterTE");
 
 		AlarmBlock = new BlockAlarm();
-		GameRegistry.registerBlock(AlarmBlock, "alarm");
-		AlarmBlock.setCreativeTab(CreativeTab);
+		registerBlock(AlarmBlock, "alarm");
 		GameRegistry.registerTileEntity(TileEntityAlarm.class, "AlarmTE");
 
 		EntityDetectorBlock = new BlockEntityDetector();
-		GameRegistry.registerBlock(EntityDetectorBlock, "entitydetector");
-		EntityDetectorBlock.setCreativeTab(CreativeTab);
+		registerBlock(EntityDetectorBlock, "entitydetector");
 		GameRegistry.registerTileEntity(TileEntityEntityDetector.class, "EntityDetectorTE");
 
 		DoorControllerBlock = new BlockDoorController();
-		GameRegistry.registerBlock(DoorControllerBlock, "doorcontroller");
-		DoorControllerBlock.setCreativeTab(CreativeTab);
+		registerBlock(DoorControllerBlock, "doorcontroller");
 		GameRegistry.registerTileEntity(TileEntityDoorController.class, "DoorControllerTE");
 
 		SecurityDoorBlock = new BlockSecurityDoor();
-		GameRegistry.registerBlock(SecurityDoorBlock, "SecurityDoor");
+		registerBlock(SecurityDoorBlock, "SecurityDoor");
 
 		SecurityDoorPrivateBlock = new BlockSecurityDoorPrivate();
-		GameRegistry.registerBlock(SecurityDoorPrivateBlock, "SecurityDoorPrivate");
-		
+		registerBlock(SecurityDoorPrivateBlock, "SecurityDoorPrivate");
+
 		GameRegistry.registerTileEntity(TileEntitySecureDoor.class, "SecureDoorTE");
-		
+
 		DataBlock = new BlockData();
-		GameRegistry.registerBlock(DataBlock, OpenSecurity.MODID + ".DataBlock");
-		DataBlock.setCreativeTab(CreativeTab);
+		registerBlock(DataBlock, OpenSecurity.MODID + ".DataBlock");
 		GameRegistry.registerTileEntity(TileEntityDataBlock.class, OpenSecurity.MODID + ".DataBlockTE");
 
 		SwitchableHubBlock = new BlockSwitchableHub();
-		GameRegistry.registerBlock(SwitchableHubBlock, OpenSecurity.MODID + ".SwitchableHub");
-		SwitchableHubBlock.setCreativeTab(CreativeTab);
+		registerBlock(SwitchableHubBlock, OpenSecurity.MODID + ".SwitchableHub");
 		GameRegistry.registerTileEntity(TileEntitySwitchableHub.class, OpenSecurity.MODID + ".SwitchableHubTE");
-		
+
 		KVMBlock = new BlockKVM();
-		GameRegistry.registerBlock(KVMBlock, OpenSecurity.MODID + ".BlockKVM");
-		KVMBlock.setCreativeTab(CreativeTab);
+		registerBlock(KVMBlock, OpenSecurity.MODID + ".BlockKVM");
 		GameRegistry.registerTileEntity(TileEntityKVM.class, OpenSecurity.MODID + ".KVMTE");
 
 		//DisplayPanel = new BlockDisplayPanel();
-		//GameRegistry.registerBlock(DisplayPanel, OpenSecurity.MODID + ".DisplayPanel");
+		//registerBlock(DisplayPanel, OpenSecurity.MODID + ".DisplayPanel");
 		//DisplayPanel.setCreativeTab(CreativeTab);
-		
+
 		//GameRegistry.registerTileEntity(TileEntityDisplayPanel.class, OpenSecurity.MODID + ".DisplayPanelTE");
-		
+
 		energyTurretBlock = new BlockEnergyTurret();
-		GameRegistry.registerBlock(energyTurretBlock, "energyTurretBlock");
-		energyTurretBlock.setCreativeTab(CreativeTab);
-		
+		registerBlock(energyTurretBlock, "energyTurretBlock");
+
 		GameRegistry.registerTileEntity(TileEntityEnergyTurret.class, "EnergyTurret");
 
 		keypadLockBlock = new BlockKeypadLock();
-		GameRegistry.registerBlock(keypadLockBlock, "keypadLock");
-		keypadLockBlock.setCreativeTab(CreativeTab);
+		registerBlock(keypadLockBlock, "keypadLock");
 		GameRegistry.registerTileEntity(TileEntityKeypadLock.class, "KeypadLock");
-		
+
 		biometricScanner = new BlockBiometricReader();
-		GameRegistry.registerBlock(biometricScanner, "biometricScanner");
-		biometricScanner.setCreativeTab(CreativeTab);
+		registerBlock(biometricScanner, "biometricScanner");
 		GameRegistry.registerTileEntity(TileEntityBiometricReader.class, "BiometricReader");
-		
-		
+
 		OpenSecurity.logger.info("Registered Blocks");
+	}
+
+	private static void registerItems() {
+		magCardItem = new ItemMagCard();
+		registerItem(magCardItem, "magCard");
+
+		rfidCardItem = new ItemRFIDCard();
+		registerItem(rfidCardItem, "rfidCard");
+
+		rfidReaderCardItem = new ItemRFIDReaderCard();
+		registerItem(rfidReaderCardItem, "rfidReaderCard");
+
+		secureNetworkCardItem = new ItemSecureNetworkCard();
+		registerItem(secureNetworkCardItem, "secureNetworkCard");
+
+		securityDoorItem = new ItemSecurityDoor(SecurityDoorBlock);
+		registerItem(securityDoorItem, "securityDoor");
+
+		securityDoorPrivateItem = new ItemSecurityDoorPrivate(SecurityDoorBlock);
+		registerItem(securityDoorPrivateItem, "securityDoorPrivate");
+
+		damageUpgradeItem = new ItemDamageUpgrade();
+		registerItem(damageUpgradeItem, "damageUpgrade");
+
+		cooldownUpgradeItem = new ItemCooldownUpgrade();
+		registerItem(cooldownUpgradeItem, "cooldownUpgrade");
+
+		energyUpgradeItem = new ItemEnergyUpgrade();
+		registerItem(energyUpgradeItem, "energyUpgrade");
+
+		movementUpgradeItem = new ItemMovementUpgrade();
+		registerItem(movementUpgradeItem, "movementUpgrade");
+
+		OpenSecurity.logger.info("Registered Items");
 	}
 
 	private static void registerTabs() {
@@ -220,7 +212,7 @@ public class ContentRegistry {
 				return li.cil.oc.api.FileSystem.fromClass(OpenSecurity.class, OpenSecurity.MODID, "/lua/SecureOS/SecureOS/");
 			}
 		};
-		secureOS_disk = li.cil.oc.api.Items.registerFloppy("SecureOS", 1, SOSFactory);
+		secureOS_disk = li.cil.oc.api.Items.registerFloppy("SecureOS", EnumDyeColor.byDyeDamage(1), SOSFactory);
 
 		// Vanilla Minecraft blocks/items
 		String iron = "ingotIron";
@@ -229,14 +221,14 @@ public class ContentRegistry {
 		String obsidian = "obsidian";
 		String glass = "blockGlassColorless";
 		String stone = "blockStone";
-		ItemStack stone_button = new ItemStack((Block)Block.blockRegistry.getObject("stone_button"));
-		ItemStack paper = new ItemStack(Items.paper);
-		ItemStack noteblock = new ItemStack(Blocks.noteblock);
-		ItemStack door = new ItemStack(Items.iron_door);
-		ItemStack gunpowder = new ItemStack(Items.gunpowder);
-		ItemStack arrow = new ItemStack(Items.arrow);
-		ItemStack piston = new ItemStack(Item.getItemFromBlock(Blocks.piston));
-		ItemStack water = new ItemStack(Items.water_bucket);
+		ItemStack stone_button = new ItemStack(Blocks.STONE_BUTTON);
+		ItemStack paper = new ItemStack(Items.PAPER);
+		ItemStack noteblock = new ItemStack(Blocks.NOTEBLOCK);
+		ItemStack door = new ItemStack(Items.IRON_DOOR);
+		ItemStack gunpowder = new ItemStack(Items.GUNPOWDER);
+		ItemStack arrow = new ItemStack(Items.ARROW);
+		ItemStack piston = new ItemStack(Item.getItemFromBlock(Blocks.PISTON));
+		ItemStack water = new ItemStack(Items.WATER_BUCKET);
 
 		// Opencomputers blocks/items
 		String t2microchip = "oc:circuitChip2";

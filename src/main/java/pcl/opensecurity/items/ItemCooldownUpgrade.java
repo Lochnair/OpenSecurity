@@ -1,25 +1,25 @@
 package pcl.opensecurity.items;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * @author Caitlyn
  *
  */
-public class ItemCooldownUpgrade extends Item {
+public class ItemCooldownUpgrade extends Item implements IItemColor {
 
 	public ItemCooldownUpgrade() {
 		super();
 		setUnlocalizedName("cooldownUpgrade");
-		setTextureName("opensecurity:cooldownUpgrade");
 	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
-	public int getColorFromItemStack(ItemStack stack, int par2)
+	public int getColorFromItemstack(ItemStack stack, int par2)
 	{
 		if (stack.hasTagCompound() && stack.getTagCompound().hasKey("color")) {
 			return stack.getTagCompound().getInteger("color");	

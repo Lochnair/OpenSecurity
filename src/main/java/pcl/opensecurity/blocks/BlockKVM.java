@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -63,7 +64,7 @@ public class BlockKVM extends BlockOSBase {
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int metadata, float clickX, float clickY, float clickZ) {
+	public boolean onBlockActivated(World world, BlockPos pos, EntityPlayer player, int metadata, float clickX, float clickY, float clickZ) {
 		TileEntity tileEntity = world.getTileEntity(x, y, z);
 		if (tileEntity == null || player.isSneaking()) {
 			return false;

@@ -20,10 +20,11 @@ import li.cil.oc.common.item.TabletWrapper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.math.AxisAlignedBB;
 import pcl.opensecurity.ContentRegistry;
 import pcl.opensecurity.OpenSecurity;
 import pcl.opensecurity.items.ItemRFIDCard;
@@ -90,9 +91,9 @@ public class RFIDReaderCardDriver extends DriverItem {
 			double rangeToEntity = entity.getDistance(container.xPosition(), container.yPosition(), container.zPosition());
 			String name;
 			if (entity instanceof EntityPlayerMP)
-				name = ((EntityPlayer) entity).getDisplayName();
+				name = ((EntityPlayer) entity).getDisplayName().getFormattedText();
 			else
-				name = entity.getCommandSenderName();
+				name = entity.getCommandSenderEntity().getName();
 			node.sendToReachable("computer.signal", "rfidData", name, rangeToEntity, data, uuid);
 			value.put("name", name);
 			value.put("range", rangeToEntity);
@@ -108,7 +109,7 @@ public class RFIDReaderCardDriver extends DriverItem {
 			Entity entity;
 			Map<Integer, HashMap<String, Object>> output = new HashMap<Integer, HashMap<String, Object>>();
 			int index = 1;
-			List e = container.world().getEntitiesWithinAABB(Entity.class, AxisAlignedBB.getBoundingBox(container.xPosition() - range, container.yPosition() - range, container.zPosition() - range, container.xPosition() + range, container.yPosition() + range, container.zPosition() + range));
+			List e = container.world().getEntitiesWithinAABB(Entity.class, new AxisAlignedBB(container.xPosition() - range, container.yPosition() - range, container.zPosition() - range, container.xPosition() + range, container.yPosition() + range, container.zPosition() + range));
 			if (!e.isEmpty()) {
 				for (int i = 0; i <= e.size() - 1; i++) {
 					entity = (Entity) e.get(i);
@@ -118,30 +119,30 @@ public class RFIDReaderCardDriver extends DriverItem {
 						int size = playerInventory.length;
 						for (int k = 0; k < size; k++) {
 							ItemStack st = em.inventory.getStackInSlot(k);
-							if (st != null && st.getItem() instanceof ItemRFIDCard && st.stackTagCompound != null && st.stackTagCompound.hasKey("data")) {
+							if (st != null && st.getItem() instanceof ItemRFIDCard && st.getTagCompound() != null && st.getTagCompound().hasKey("data")) {
 								String localUUID;
 								if (!OpenSecurity.ignoreUUIDs) {
-									localUUID = st.stackTagCompound.getString("uuid");
+									localUUID = st.getTagCompound().getString("uuid");
 								} else {
 									localUUID = "-1";
 								}
-								output.put(index++, info(entity, st.stackTagCompound.getString("data"), localUUID, st.stackTagCompound.getBoolean("locked")));
+								output.put(index++, info(entity, st.getTagCompound().getString("data"), localUUID, st.getTagCompound().getBoolean("locked")));
 							}
 						}
 					} else if (entity instanceof li.cil.oc.common.entity.Drone) {
 						li.cil.oc.common.entity.Drone em = (li.cil.oc.common.entity.Drone) entity;
-						Inventory droneInventory = em.mainInventory();
+						Inventory droneInventory = (Inventory) em.mainInventory();
 						int size = em.inventorySize();
 						for (int k = 0; k < size; k++) {
 							ItemStack st = droneInventory.getStackInSlot(k);
-							if (st != null && st.getItem() instanceof ItemRFIDCard && st.stackTagCompound != null && st.stackTagCompound.hasKey("data")) {
+							if (st != null && st.getItem() instanceof ItemRFIDCard && st.getTagCompound() != null && st.getTagCompound().hasKey("data")) {
 								String localUUID;
 								if (!OpenSecurity.ignoreUUIDs) {
-									localUUID = st.stackTagCompound.getString("uuid");
+									localUUID = st.getTagCompound().getString("uuid");
 								} else {
 									localUUID = "-1";
 								}
-								output.put(index++, info(entity, st.stackTagCompound.getString("data"), localUUID, st.stackTagCompound.getBoolean("locked")));
+								output.put(index++, info(entity, st.getTagCompound().getString("data"), localUUID, st.getTagCompound().getBoolean("locked")));
 							}
 						}
 					}

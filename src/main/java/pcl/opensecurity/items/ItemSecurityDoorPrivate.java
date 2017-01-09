@@ -15,11 +15,10 @@ public class ItemSecurityDoorPrivate extends ItemDoor {
 	public Block doorBlock;
 
 	public ItemSecurityDoorPrivate(Block block) {
-		super(Material.iron);
+		super(block);
 		this.doorBlock = block;
 		this.maxStackSize = 16;
 		this.setUnlocalizedName("securityDoorPrivate");
-		this.setTextureName("opensecurity:door_secure_nowindow");
 		this.setCreativeTab(ContentRegistry.CreativeTab);
 	}
 

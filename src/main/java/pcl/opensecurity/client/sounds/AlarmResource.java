@@ -4,20 +4,17 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 
-import pcl.opensecurity.OpenSecurity;
-
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import cpw.mods.fml.common.ObfuscationReflectionHelper;
-import cpw.mods.fml.relauncher.ReflectionHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.client.resources.data.IMetadataSection;
-import net.minecraft.client.resources.data.IMetadataSerializer;
+import net.minecraft.client.resources.data.MetadataSerializer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 
 public class AlarmResource implements IResourcePack {
     public static final String PACK_NAME = "opensecurity_external";
@@ -34,9 +31,12 @@ public class AlarmResource implements IResourcePack {
     public Set<String> getResourceDomains() {
         return Sets.newHashSet(getPackName());
     }
-    public IMetadataSection getPackMetadata(IMetadataSerializer p_135058_1_, String p_135058_2_) throws IOException {
-        return null; //too hacky for this
+
+    @Override
+    public <T extends IMetadataSection> T getPackMetadata(MetadataSerializer metadataSerializer, String metadataSectionName) throws IOException {
+        return null;
     }
+
     public BufferedImage getPackImage() throws IOException {
         return null; //don't need no image for this shit
     }

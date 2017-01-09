@@ -10,6 +10,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.ResourceLocation;
 import pcl.opensecurity.OpenSecurity;
 import pcl.opensecurity.client.sounds.AlarmResource;
@@ -60,7 +61,7 @@ public class TileEntityAlarm extends TileEntityMachineBase implements SimpleComp
 
 	public void setShouldStart(boolean b) {
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-		getDescriptionPacket();
+		getUpdatePacket();
 		shouldPlay = true;
 
 	}
@@ -68,7 +69,7 @@ public class TileEntityAlarm extends TileEntityMachineBase implements SimpleComp
 	public void setShouldStop(boolean b) {
 		shouldPlay = false;
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-		getDescriptionPacket();
+		getUpdatePacket();
 	}
 
 	// OC Methods.
@@ -97,7 +98,7 @@ public class TileEntityAlarm extends TileEntityMachineBase implements SimpleComp
 			soundName = alarm;
 			setSound(alarm);
 			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-			getDescriptionPacket();
+			getUpdatePacket();
 			return new Object[] { "Success" };
 		} else {
 			return new Object[] { "Fail" };
@@ -139,15 +140,15 @@ public class TileEntityAlarm extends TileEntityMachineBase implements SimpleComp
 	}
 
 	@Override
-	public Packet getDescriptionPacket() {
+	public SPacketUpdateTileEntity getUpdatePacket() {
 		NBTTagCompound tagCom = new NBTTagCompound();
 		this.writeToNBT(tagCom);
-		return new S35PacketUpdateTileEntity(this.xCoord, this.yCoord, this.zCoord, this.blockMetadata, tagCom);
+		return new SPacketUpdateTileEntity(this.getPos(), this.getBlockMetadata(), tagCom);
 	}
 
 	@Override
-	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
-		NBTTagCompound tagCom = packet.func_148857_g();
+	public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
+		NBTTagCompound tagCom = packet.getNbtCompound();
 		this.readFromNBT(tagCom);
 	}
 
@@ -158,9 +159,9 @@ public class TileEntityAlarm extends TileEntityMachineBase implements SimpleComp
 	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound tag) {
+	public NBTTagCompound writeToNBT(NBTTagCompound tag) {
 		super.writeToNBT(tag);
-		writeSyncableDataToNBT(tag);
+		return writeSyncableDataToNBT(tag);
 	}
 
 	private void readSyncableDataFromNBT(NBTTagCompound tag) {
@@ -170,11 +171,13 @@ public class TileEntityAlarm extends TileEntityMachineBase implements SimpleComp
 		computerPlaying = tag.getBoolean("computerPlaying");
 	}
 
-	private void writeSyncableDataToNBT(NBTTagCompound tag) {
+	private NBTTagCompound writeSyncableDataToNBT(NBTTagCompound tag) {
 		tag.setBoolean("isPlayingSound", shouldPlay);
 		tag.setString("alarmName", soundName);
 		tag.setFloat("volume", volume);
 		tag.setBoolean("computerPlaying", computerPlaying);
+
+		return tag;
 	}
 
 	@Override

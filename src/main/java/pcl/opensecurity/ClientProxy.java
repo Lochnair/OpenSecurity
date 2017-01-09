@@ -2,17 +2,19 @@ package pcl.opensecurity;
 
 import java.io.File;
 
-import cpw.mods.fml.client.registry.ClientRegistry;
-import cpw.mods.fml.client.registry.RenderingRegistry;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.MinecraftForgeClient;
-import pcl.opensecurity.CommonProxy;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import pcl.opensecurity.client.renderer.RenderEnergyTurret;
 import pcl.opensecurity.client.renderer.RenderDisplayPanel;
 import pcl.opensecurity.client.renderer.RenderEntityEnergyBolt;
@@ -33,7 +35,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public Object getClientGuiElement(int ID, EntityPlayer player, World world,
 			int x, int y, int z) {
-		TileEntity te = world.getTileEntity(x, y, z);
+		TileEntity te = world.getTileEntity(new BlockPos(x, y, z));
 		if (te != null && te instanceof TileEntityMagReader) {
 			TileEntityMagReader icte = (TileEntityMagReader) te;
 			return new MagCardContainer(player.inventory, icte);
@@ -43,6 +45,16 @@ public class ClientProxy extends CommonProxy {
 		} else {
 			return null;
 		}
+	}
+
+	@Override
+	public void preInit(FMLPreInitializationEvent e) {
+		super.preInit(e);
+
+		Minecraft.getMinecraft().getItemColors().registerItemColorHandler((IItemColor) ContentRegistry.cooldownUpgradeItem, ContentRegistry.cooldownUpgradeItem);
+		Minecraft.getMinecraft().getItemColors().registerItemColorHandler((IItemColor) ContentRegistry.damageUpgradeItem, ContentRegistry.damageUpgradeItem);
+		Minecraft.getMinecraft().getItemColors().registerItemColorHandler((IItemColor) ContentRegistry.magCardItem, ContentRegistry.magCardItem);
+		Minecraft.getMinecraft().getItemColors().registerItemColorHandler((IItemColor) ContentRegistry.movementUpgradeItem, ContentRegistry.movementUpgradeItem);
 	}
 
 	public void registerRenderers()
@@ -80,7 +92,7 @@ public class ClientProxy extends CommonProxy {
 	@Override
 	public World getWorld(int dimId) {
 		World world = Minecraft.getMinecraft().theWorld;
-		if (world.provider.dimensionId == dimId) {
+		if (world.provider.getDimension() == dimId) {
 			return world;
 		}
 		return null;

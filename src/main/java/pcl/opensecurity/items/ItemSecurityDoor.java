@@ -1,68 +1,61 @@
 package pcl.opensecurity.items;
 
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import pcl.opensecurity.ContentRegistry;
-import pcl.opensecurity.OpenSecurity;
 import pcl.opensecurity.tileentity.TileEntitySecureDoor;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemDoor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
 public class ItemSecurityDoor extends ItemDoor {
 	public Block doorBlock;
 
 	public ItemSecurityDoor(Block block) {
-		super(Material.iron);
+		super(block);
 		this.doorBlock = block;
 		this.maxStackSize = 16;
 		this.setUnlocalizedName("securityDoor");
-		this.setTextureName("opensecurity:door_secure");
 		this.setCreativeTab(ContentRegistry.CreativeTab);
 	}
-
 
     /**
      * Callback for item usage. If the item does something special on right clicking, he will have one of those. Return
      * True if something happen and false if it don't. This is for ITEMS, not BLOCKS
      */
-    public boolean onItemUse(ItemStack par1ItemStack, EntityPlayer par2EntityPlayer, World par3World, int par4, int par5, int par6, int par7, float par8, float par9, float par10)
-    {
-        if (par7 != 1)
+    @Override
+    public EnumActionResult onItemUse(ItemStack stack, EntityPlayer playerIn, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        if (facing != null)
         {
-            return false;
+            return EnumActionResult.FAIL;
         }
-        else
-        {
-            ++par5;
+        else {
+            pos.add(0, 1, 0);
             Block block;
 
             block = ContentRegistry.SecurityDoorBlock;
 
-            if (par2EntityPlayer.canPlayerEdit(par4, par5, par6, par7, par1ItemStack) && par2EntityPlayer.canPlayerEdit(par4, par5 + 1, par6, par7, par1ItemStack))
-            {
-                if (!block.canPlaceBlockAt(par3World, par4, par5, par6))
-                {
-                    return false;
+            if (playerIn.canPlayerEdit(pos, facing, stack) && playerIn.canPlayerEdit(pos.add(0, 1, 0), facing, stack)) {
+                if (!block.canPlaceBlockAt(worldIn, pos)) {
+                    return EnumActionResult.FAIL;
+                } else {
+                    int i1 = MathHelper.floor_double((double) ((playerIn.rotationYaw + 180.0F) * 4.0F / 360.0F) - 0.5D) & 3;
+                    placeDoorBlock(worldIn, pos, i1, block, playerIn);
+                    --stack.stackSize;
+                    return EnumActionResult.PASS;
                 }
-                else
-                {
-                    int i1 = MathHelper.floor_double((double)((par2EntityPlayer.rotationYaw + 180.0F) * 4.0F / 360.0F) - 0.5D) & 3;
-                    placeDoorBlock(par3World, par4, par5, par6, i1, block, par2EntityPlayer);
-                    --par1ItemStack.stackSize;
-                    return true;
-                }
-            }
-            else
-            {
-                return false;
+            } else {
+                return EnumActionResult.FAIL;
             }
         }
     }
 
-    public static void placeDoorBlock(World world, int x, int y, int z, int direction, Block block, EntityPlayer entityPlayer)
+    public static void placeDoorBlock(World world, BlockPos pos, int direction, Block block, EntityPlayer entityPlayer)
     {
         byte b0 = 0;
         byte b1 = 0;

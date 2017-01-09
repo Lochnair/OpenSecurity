@@ -3,6 +3,7 @@ package pcl.opensecurity.blocks;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -10,17 +11,21 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import pcl.opensecurity.OpenSecurity;
 import pcl.opensecurity.tileentity.TileEntityCardWriter;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
+import javax.annotation.Nullable;
 
 public class BlockCardWriter extends BlockOSBase {
 
 	public BlockCardWriter() {
-		setBlockName("cardwriter");
+		this.setUnlocalizedName("cardwriter");
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -67,23 +72,23 @@ public class BlockCardWriter extends BlockOSBase {
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int metadata, float clickX, float clickY, float clickZ) {
-		TileEntity tileEntity = world.getTileEntity(x, y, z);
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+		TileEntity tileEntity = world.getTileEntity(pos);
 		if (tileEntity == null || player.isSneaking()) {
 			return false;
 		}
-		player.openGui(OpenSecurity.instance, 0, world, x, y, z);
+		player.openGui(OpenSecurity.instance, 0, world, pos.getX(), pos.getY(), pos.getZ());
 		return true;
 	}
 
 	@Override
-	public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
-		TileEntityCardWriter tileEntity = (TileEntityCardWriter) world.getTileEntity(x, y, z);
-		dropContent(tileEntity, world, tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord);
-		super.breakBlock(world, x, y, z, block, meta);
+	public void breakBlock(World world, BlockPos pos, IBlockState state) {
+		TileEntityCardWriter tileEntity = (TileEntityCardWriter) world.getTileEntity(pos);
+		dropContent(tileEntity, world, pos);
+		super.breakBlock(world, pos, state);
 	}
 
-	public void dropContent(IInventory chest, World world, int xCoord, int yCoord, int zCoord) {
+	public void dropContent(IInventory chest, World world, BlockPos pos) {
 		if (chest == null)
 			return;
 		Random random = new Random();
@@ -102,7 +107,7 @@ public class BlockCardWriter extends BlockOSBase {
 						stackSize = itemstack.stackSize;
 
 					itemstack.stackSize -= stackSize;
-					entityitem = new EntityItem(world, xCoord + offsetX, yCoord + offsetY, zCoord + offsetZ, new ItemStack(itemstack.getItem(), stackSize, itemstack.getItemDamage()));
+					entityitem = new EntityItem(world, pos.getX() + offsetX, pos.getY() + offsetY, pos.getZ() + offsetZ, new ItemStack(itemstack.getItem(), stackSize, itemstack.getItemDamage()));
 
 					float velocity = 0.05F;
 					entityitem.motionX = (float) random.nextGaussian() * velocity;

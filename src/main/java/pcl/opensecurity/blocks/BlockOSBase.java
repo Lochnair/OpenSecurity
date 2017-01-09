@@ -2,17 +2,18 @@ package pcl.opensecurity.blocks;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public class BlockOSBase extends BlockContainer {
 
 	protected BlockOSBase() {
-		super(Material.iron);
+		super(Material.IRON);
 		this.setHardness(5F);
 		this.setResistance(30F);
 	}
@@ -26,15 +27,16 @@ public class BlockOSBase extends BlockContainer {
 	 * Called when the block is placed in the world.
 	 */
 	@Override
-	public void onBlockPlacedBy(World par1World, int x, int y, int z, EntityLivingBase par5EntityLivingBase, ItemStack par6ItemStack) {
-		super.onBlockPlacedBy(par1World, x, y, z, par5EntityLivingBase, par6ItemStack);
+	public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+		super.onBlockPlacedBy(worldIn, pos, state, placer, stack);
+
 		int whichDirectionFacing = 0;
-		if (par5EntityLivingBase.rotationPitch >= 70) {
+		if (placer.rotationPitch >= 70) {
 			whichDirectionFacing = 0;// down
-		} else if (par5EntityLivingBase.rotationPitch <= -70) {
+		} else if (placer.rotationPitch <= -70) {
 			whichDirectionFacing = 1;// up
 		} else {
-			whichDirectionFacing = MathHelper.floor_double(par5EntityLivingBase.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
+			whichDirectionFacing = MathHelper.floor_double(placer.rotationYaw * 4.0F / 360.0F + 0.5D) & 3;
 			switch (whichDirectionFacing) {
 			case 0:
 				whichDirectionFacing = ForgeDirection.SOUTH.ordinal();
@@ -52,7 +54,8 @@ public class BlockOSBase extends BlockContainer {
 				break;
 			}
 		}
-		par1World.setBlockMetadataWithNotify(x, y, z, par5EntityLivingBase.isSneaking() ? whichDirectionFacing : ForgeDirection.OPPOSITES[whichDirectionFacing], 2);
+
+		worldIn.setBlockMetadataWithNotify(x, y, z, par5EntityLivingBase.isSneaking() ? whichDirectionFacing : ForgeDirection.OPPOSITES[whichDirectionFacing], 2);
 	}
 
 }

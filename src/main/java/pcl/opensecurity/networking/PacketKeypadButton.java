@@ -1,26 +1,25 @@
 package pcl.opensecurity.networking;
 
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 
 public class PacketKeypadButton implements IMessage {
 	int button;
 	short id;
 	short instance;
 	int dimension;
-	int x, y, z;
+	BlockPos pos;
 	
 	public PacketKeypadButton() {
 		//intentionally empty
 	}
 	
-	public PacketKeypadButton(short instance, int dim, int x, int y, int z, int button) {
+	public PacketKeypadButton(short instance, int dim, BlockPos pos, int button) {
 		this.id = 1;
 		this.instance = instance;
 		this.dimension = dim;
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		this.pos = pos;
 		this.button = button;
 	}
 	
@@ -29,9 +28,9 @@ public class PacketKeypadButton implements IMessage {
 		buf.writeInt(button);
 		buf.writeShort(instance);
 		buf.writeInt(dimension);
-		buf.writeInt(x);
-		buf.writeInt(y);
-		buf.writeInt(z);
+		buf.writeInt(pos.getX());
+		buf.writeInt(pos.getY());
+		buf.writeInt(pos.getZ());
 	}
 	
 	@Override
@@ -39,8 +38,9 @@ public class PacketKeypadButton implements IMessage {
 		button = buf.readInt();
 		instance = buf.readShort();
 		dimension = buf.readInt();
-		x = buf.readInt();
-		y = buf.readInt();
-		z = buf.readInt();
+		pos = new BlockPos(buf.readInt(),
+				buf.readInt(),
+				buf.readInt()
+		);
 	}
 }

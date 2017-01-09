@@ -3,6 +3,7 @@ package pcl.opensecurity.gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -60,27 +61,27 @@ public class KVMGUI extends GuiContainer {
 		switch(button.id) {
 		case 0:
 			//bottom
-			OpenSecurity.network.sendToServer(new OSPacketHandler(0, te.xCoord, te.yCoord, te.zCoord, 1));
+			OpenSecurity.network.sendToServer(new OSPacketHandler(0, te.getPos(), 1));
 			break;
 		case 1:
 			//top
-			OpenSecurity.network.sendToServer(new OSPacketHandler(1, te.xCoord, te.yCoord, te.zCoord, 1));
+			OpenSecurity.network.sendToServer(new OSPacketHandler(1, te.getPos(), 1));
 			break;
 		case 2:
 			//back
-			OpenSecurity.network.sendToServer(new OSPacketHandler(2, te.xCoord, te.yCoord, te.zCoord, 1));			
+			OpenSecurity.network.sendToServer(new OSPacketHandler(2, te.getPos(), 1));
 			break;
 		case 3:
 			//front		
-			OpenSecurity.network.sendToServer(new OSPacketHandler(3, te.xCoord, te.yCoord, te.zCoord, 1));
+			OpenSecurity.network.sendToServer(new OSPacketHandler(3, te.getPos(), 1));
 			break;
 		case 4:
 			//right
-			OpenSecurity.network.sendToServer(new OSPacketHandler(4, te.xCoord, te.yCoord, te.zCoord, 1));
+			OpenSecurity.network.sendToServer(new OSPacketHandler(4, te.getPos(), 1));
 			break;
 		case 5:
 			//left
-			OpenSecurity.network.sendToServer(new OSPacketHandler(5, te.xCoord, te.yCoord, te.zCoord, 1));
+			OpenSecurity.network.sendToServer(new OSPacketHandler(5, te.getPos(), 1));
 			break;
 		case 6:
 			this.mc.thePlayer.closeScreen(); 
@@ -98,8 +99,8 @@ public class KVMGUI extends GuiContainer {
 	}
 
 
-	public boolean getSideState(int side, int meta) {		
-		ForgeDirection facing = ForgeDirection.getOrientation(meta);
+	public boolean getSideState(int side, int meta) {
+		EnumFacing facing = EnumFacing.getFront(meta);
 
 		switch (facing) {
 		case NORTH:

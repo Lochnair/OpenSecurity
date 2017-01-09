@@ -15,7 +15,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.client.IItemRenderer;
 
 public class RenderKeypad extends TileEntitySpecialRenderer implements IItemRenderer {
 
@@ -67,7 +66,7 @@ public class RenderKeypad extends TileEntitySpecialRenderer implements IItemRend
 		float z=depth;
 		float w=pos.w*texPixel;
 		float h=pos.h*texPixel;
-			
+
 		tessellator.setNormal(0f,0f,-1f);
 		tessellator.addVertexWithUV(x,   y,   z, tx, ty);
 		tessellator.addVertexWithUV(x,   y+h, z, tx, ty+2f*texPixel);

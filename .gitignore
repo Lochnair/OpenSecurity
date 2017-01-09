@@ -94,3 +94,6 @@ pip-log.txt
 *.lnk
 output.txt
 /bin
+
+# IDEA
+/out/

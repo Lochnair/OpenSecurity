@@ -2,8 +2,8 @@ package pcl.opensecurity.blocks;
 
 import java.util.Random;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import pcl.opensecurity.ContentRegistry;
 import pcl.opensecurity.OpenSecurity;
 import pcl.opensecurity.tileentity.TileEntityDoorController;
@@ -33,7 +33,7 @@ public class BlockSecurityDoor extends BlockDoor {
 
 	public BlockSecurityDoor()
 	{
-		super(Material.iron);
+		super(Material.IRON);
 		float f = 0.5F;
 		float f1 = 1.0F;
 		this.setBlockBounds(0.5F - f, 0.0F, 0.5F - f, 0.5F + f, f1, 0.5F + f);
